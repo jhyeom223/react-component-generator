@@ -11,6 +11,7 @@
 - 타입체크 + 빌드: `bun run build`
 - 린트: `bun run lint`
 - 작업 완료 전 `bun run test`와 `bun run lint`를 통과시킨다.
+- 코드(`src/`, `server/`)를 생성·수정했다면, 테스트·린트 통과 후 사용자에게 완료를 보고하기 전에 `evaluator` 서브 에이전트(`.claude/agents/evaluator.md`)를 호출한다. prompt에는 요구사항 원문, 변경 파일 목록, 테스트·린트 결과를 넣는다. 판정이 FAIL이면 결함을 고치고(버그 재현 테스트부터) 다시 호출하며, PASS 전에는 완료로 보고하지 않는다. 문서·설정만 바꾼 경우는 생략한다.
 
 ## Golden Rules
 
