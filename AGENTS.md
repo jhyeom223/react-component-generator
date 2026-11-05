@@ -20,6 +20,14 @@
 - `.env`는 커밋하지 않는다 (`.gitignore`에 등록됨). 키를 코드에 하드코딩하지 않는다.
 - 클라이언트 입력 키가 `.env` 키보다 우선한다 (`server/index.ts:65`). 이 우선순위를 바꾸면 UI 안내 문구(`src/App.tsx:120`)도 함께 수정한다.
 
+### Sensitive Files (에이전트 접근 금지)
+
+- 민감 파일은 읽지도, 수정하지도, 생성하지도 않는다. 대상: `.env`, `.env.*`(`.env.example` 포함), `.envrc`, 이름에 `secret`/`credential`이 들어간 파일, `*.pem`/`*.key`/`*.p12`/`*.pfx`/`*.jks`/`*.keystore`, SSH 키(`id_rsa*`, `id_ed25519*`), `.npmrc`/`.netrc`/`.git-credentials`, 홈의 `~/.ssh`, `~/.aws`, `~/.azure`, `~/.config/gcloud`, `~/.docker/config.json`, `~/.kube/config`.
+- 이 규칙은 `.claude/settings.json`의 `permissions.deny`로 강제된다. 규칙 문서와 deny 목록은 함께 유지하며, 한쪽만 바꾸지 않는다.
+- 셸로 우회하지 않는다. `bun -e`/`node -e`의 파일 읽기, `sed`/`awk`/`cp`/`git show`/`git diff`, 환경변수 덤프(`printenv`, `env`, `Get-ChildItem Env:`) 등 deny 패턴에 걸리지 않는 방법으로 내용을 보거나 옮기는 것도 금지다.
+- 접근이 거부되면 다른 방법을 시도하지 않고, 필요한 정보를 사용자에게 요청한다. 필요한 환경변수 이름은 `.env`가 아니라 코드(`ENV_KEYS`, `server/index.ts:59`)에서 확인한다.
+- `permissions.deny` 목록은 사용자의 명시적 요청 없이 삭제하거나 완화하지 않는다.
+
 ### Cross-Boundary Sync (FE/BE 동시 수정 필수)
 
 - `Provider` 타입이 양쪽에 중복 정의되어 있다: `src/types/index.ts:1`, `server/index.ts:57`. 제공자 추가/변경 시 `ENV_KEYS`(`server/index.ts:59`), `PROVIDER_CONFIG`(`src/App.tsx:8`)까지 4곳을 함께 수정한다.

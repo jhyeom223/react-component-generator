@@ -1,5 +1,114 @@
 {
   "worktree": {
     "baseRef": "head"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "bash",
+            "command": "cat \"$CLAUDE_PROJECT_DIR/.claude/hooks/tdd-reminder.json\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git commit*)",
+            "shell": "bash",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && out=$(bun run test 2>&1) || { printf \"%s\\n\" \"$out\" | tail -n 40 >&2; echo \"[커밋 차단] 테스트가 하나 이상 실패했습니다. 실패한 테스트를 수정해 bun run test를 통과시킨 뒤 다시 커밋하세요.\" >&2; exit 2; }",
+            "timeout": 300,
+            "onFailure": "block",
+            "statusMessage": "커밋 전 테스트 실행 중..."
+          }
+        ]
+      },
+      {
+        "matcher": "PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "PowerShell(git commit*)",
+            "shell": "bash",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && out=$(bun run test 2>&1) || { printf \"%s\\n\" \"$out\" | tail -n 40 >&2; echo \"[커밋 차단] 테스트가 하나 이상 실패했습니다. 실패한 테스트를 수정해 bun run test를 통과시킨 뒤 다시 커밋하세요.\" >&2; exit 2; }",
+            "timeout": 300,
+            "onFailure": "block",
+            "statusMessage": "커밋 전 테스트 실행 중..."
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/.envrc)",
+      "Read(**/*secret*)",
+      "Read(**/*credential*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/*.p12)",
+      "Read(**/*.pfx)",
+      "Read(**/*.jks)",
+      "Read(**/*.keystore)",
+      "Read(**/id_rsa*)",
+      "Read(**/id_ed25519*)",
+      "Read(**/.npmrc)",
+      "Read(**/.netrc)",
+      "Read(**/.git-credentials)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.azure/**)",
+      "Read(~/.config/gcloud/**)",
+      "Read(~/.docker/config.json)",
+      "Read(~/.kube/config)",
+
+      "Edit(**/.env)",
+      "Edit(**/.env.*)",
+      "Edit(**/.envrc)",
+      "Edit(**/*secret*)",
+      "Edit(**/*credential*)",
+      "Edit(**/*.pem)",
+      "Edit(**/*.key)",
+      "Edit(**/*.p12)",
+      "Edit(**/*.pfx)",
+      "Edit(**/*.jks)",
+      "Edit(**/*.keystore)",
+      "Edit(**/id_rsa*)",
+      "Edit(**/id_ed25519*)",
+      "Edit(**/.npmrc)",
+      "Edit(**/.netrc)",
+      "Edit(**/.git-credentials)",
+      "Edit(~/.ssh/**)",
+      "Edit(~/.aws/**)",
+      "Edit(~/.azure/**)",
+      "Edit(~/.config/gcloud/**)",
+      "Edit(~/.docker/config.json)",
+      "Edit(~/.kube/config)",
+
+      "Bash(cat *.env*)",
+      "Bash(type *.env*)",
+      "Bash(head *.env*)",
+      "Bash(tail *.env*)",
+      "Bash(less *.env*)",
+      "Bash(more *.env*)",
+      "Bash(grep * *.env*)",
+      "Bash(printenv*)",
+      "Bash(env)",
+      "PowerShell(Get-Content *.env*)",
+      "PowerShell(gc *.env*)",
+      "PowerShell(cat *.env*)",
+      "PowerShell(type *.env*)",
+      "PowerShell(Select-String * *.env*)",
+      "PowerShell(Get-ChildItem Env:*)",
+      "PowerShell(dir Env:*)",
+      "PowerShell(ls Env:*)"
+    ]
   }
 }
