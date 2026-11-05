@@ -1,0 +1,84 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+
+  /* 1-bit desktop palette */
+  --ink: #000000;
+  --paper: #ffffff;
+  --desk-light: #e6e6e6;
+  --desk-dark: #c4c4c4;
+  --dim: #8a8a8a;
+  --cobalt: #2b3fd1;
+
+  --font-pixel: Galmuri11, 'IBM Plex Sans KR', sans-serif;
+  --font-pixel-mono: GalmuriMono11, ui-monospace, monospace;
+  --font-text: 'IBM Plex Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-text);
+  font-size: 15px;
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  background-color: var(--desk-light);
+  background-image: repeating-conic-gradient(var(--desk-dark) 0 25%, var(--desk-light) 0 50%);
+  background-size: 2px 2px;
+}
+
+::selection {
+  background: var(--cobalt);
+  color: var(--paper);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 2px;
+}
+
+/* Classic scrollbars */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--desk-light);
+  background-image: repeating-conic-gradient(var(--desk-dark) 0 25%, var(--desk-light) 0 50%);
+  background-size: 2px 2px;
+  border-left: 1px solid var(--ink);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--paper);
+  border: 1px solid var(--ink);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--paper);
+}
