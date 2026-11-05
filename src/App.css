@@ -224,6 +224,13 @@
   font-size: 12px;
 }
 
+.prompt-error {
+  color: var(--ink);
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .examples {
   margin-top: 28px;
 }
