@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { GeneratedComponent, Provider } from '../types';
+import { loadComponents, saveComponents } from '../utils/storage';
 
 interface UseComponentGeneratorReturn {
   components: GeneratedComponent[];
@@ -11,9 +12,14 @@ interface UseComponentGeneratorReturn {
 }
 
 export function useComponentGenerator(): UseComponentGeneratorReturn {
-  const [components, setComponents] = useState<GeneratedComponent[]>([]);
+  const [components, setComponents] = useState<GeneratedComponent[]>(loadComponents);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // 목록이 바뀔 때마다 localStorage에 저장해 새로고침 후에도 유지한다.
+  useEffect(() => {
+    saveComponents(components);
+  }, [components]);
 
   const generate = useCallback(async (prompt: string, apiKey: string | undefined, provider: Provider) => {
     setIsLoading(true);

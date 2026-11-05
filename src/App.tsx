@@ -3,6 +3,8 @@ import { PromptInput } from './components/PromptInput';
 import { ComponentCard } from './components/ComponentCard';
 import { useComponentGenerator } from './hooks/useComponentGenerator';
 import type { Provider } from './types';
+import { loadHistory, loadProvider, saveHistory, saveProvider } from './utils/storage';
+import { addToHistory } from './utils/promptHistory';
 import './App.css';
 
 const PROVIDER_CONFIG = {
@@ -13,7 +15,9 @@ const PROVIDER_CONFIG = {
 function App() {
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
-  const [provider, setProvider] = useState<Provider>('google');
+  // API 키는 메모리에만 두고, provider와 히스토리만 localStorage에 유지한다.
+  const [provider, setProvider] = useState<Provider>(loadProvider);
+  const [history, setHistory] = useState<string[]>(loadHistory);
   const [envKeys, setEnvKeys] = useState<Record<Provider, boolean>>({
     anthropic: false,
     google: false,
@@ -28,6 +32,14 @@ function App() {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    saveProvider(provider);
+  }, [provider]);
+
+  useEffect(() => {
+    saveHistory(history);
+  }, [history]);
+
   const hasEnvKey = envKeys[provider];
   const keyReady = hasEnvKey || apiKey.trim().length > 0;
 
@@ -36,6 +48,7 @@ function App() {
       alert(`${PROVIDER_CONFIG[provider].label} API 키를 입력하거나 .env에 설정해주세요.`);
       return;
     }
+    setHistory((prev) => addToHistory(prev, prompt));
     generate(prompt, apiKey || undefined, provider);
   };
 
@@ -70,7 +83,7 @@ function App() {
               <h2 id="prompt-title" className="titlebar-text">새 컴포넌트</h2>
             </div>
             <div className="window-body">
-              <PromptInput onGenerate={handleGenerate} isLoading={isLoading} />
+              <PromptInput onGenerate={handleGenerate} isLoading={isLoading} history={history} />
             </div>
           </section>
 

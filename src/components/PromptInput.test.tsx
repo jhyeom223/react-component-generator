@@ -28,6 +28,30 @@ describe('PromptInput', () => {
     expect(screen.getByRole('button', { name: '생성 중...' })).toBeDisabled();
   });
 
+  describe('최근 프롬프트', () => {
+    it('히스토리가 있으면 최근 프롬프트 목록을 보여준다', () => {
+      render(<PromptInput onGenerate={vi.fn()} isLoading={false} history={['첫 번째', '두 번째']} />);
+
+      const list = screen.getByRole('list', { name: '최근 프롬프트' });
+      expect(list).toHaveTextContent('첫 번째');
+      expect(list).toHaveTextContent('두 번째');
+    });
+
+    it('히스토리 항목을 클릭하면 입력창에 채워진다', async () => {
+      const user = userEvent.setup();
+      render(<PromptInput onGenerate={vi.fn()} isLoading={false} history={['다시 쓸 프롬프트']} />);
+
+      await user.click(screen.getByRole('button', { name: '다시 쓸 프롬프트' }));
+
+      expect(screen.getByRole('textbox')).toHaveValue('다시 쓸 프롬프트');
+    });
+
+    it('히스토리가 비어 있으면 최근 프롬프트 목록을 렌더링하지 않는다', () => {
+      render(<PromptInput onGenerate={vi.fn()} isLoading={false} history={[]} />);
+      expect(screen.queryByRole('list', { name: '최근 프롬프트' })).not.toBeInTheDocument();
+    });
+  });
+
   describe('500자 제한', () => {
     const overLimit = 'a'.repeat(MAX_PROMPT_LENGTH + 1);
 
